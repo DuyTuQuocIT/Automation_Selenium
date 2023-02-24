@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Parallel">
+	<listeners>
+		<listener class-name="com.selenium.core.AnnotationTransformer"/>
+		<listener class-name="com.selenium.core.MyTestListenerAdapter"/>
+	</listeners>
+	<test name="automation-test" parallel="classes" thread-count="4">
+		<classes>
+			<class name="com.selenium.core.TestRunner"/>
+			<class name="com.selenium.core.TestRunner2"/>
+			<class name="com.selenium.core.TestRunner3"/>
+			<class name="com.selenium.core.TestRunner4"/>
+		</classes>
+	</test>
+</suite> 
