@@ -1,7 +1,7 @@
 Feature: Demo Feature
 
   @TestDemo
-  Scenario: This is a demo
+  Scenario: Purchase a product in sauce demo page
     Given I navigate to url "https://www.saucedemo.com/"
     And I enter user name "standard_user"
     And I enter password "secret_sauce"
