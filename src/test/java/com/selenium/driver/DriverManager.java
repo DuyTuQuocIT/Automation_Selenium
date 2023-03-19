@@ -34,7 +34,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 public class DriverManager {
 
     // Variable used for multi-thread
-    private static ThreadLocal<WebDriver> webDriver = new ThreadLocal<>();
+    static ThreadLocal<WebDriver> webDriver = new ThreadLocal<>();
     public static ThreadLocal<SystemProperties> credentials = new ThreadLocal<>();
     public static ThreadLocal<Scenario> scenarioLog = new ThreadLocal<>();
 
@@ -84,7 +84,7 @@ public class DriverManager {
         DesiredCapabilities capabilities = new DesiredCapabilities();
 
         if (browserName == null) {
-            browserName = "firefox";
+            browserName = "edge";
         }
 
         boolean isHeadlessMode = headless != null && headless.equalsIgnoreCase("yes");
