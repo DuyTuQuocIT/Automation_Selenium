@@ -22,6 +22,8 @@ import io.cucumber.plugin.event.TestCase;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -72,80 +74,63 @@ public class DriverManager {
 
     @Before(order = 1)
     public static void createDriver(Scenario scenario) {
+        // gets the ID of the current thread
+        System.out.println( "Current Thread ID: " + Thread.currentThread().getId());
+
         scenarioLog.set(scenario);
-
-
         // Setup web driver
         String browserName = System.getProperty("browser");
         String headless = System.getProperty("headless");
-        String os = System.getProperty("os.name");
-
         DesiredCapabilities capabilities = new DesiredCapabilities();
 
         if (browserName == null) {
-            browserName = "chrome";
+            browserName = "firefox";
         }
 
-        if (browserName.equalsIgnoreCase("Firefox")) {
-            //capabilities = DesiredCapabilities.firefox();
+        boolean isHeadlessMode = headless != null && headless.equalsIgnoreCase("yes");
 
-            FirefoxOptions options = new FirefoxOptions();
-            // configuration to run headless mode
-            if(headless != null && headless.equalsIgnoreCase("yes")) {
-                options.addArguments("--window-size=1920,1080");
-                options.addArguments("--start-maximized");
-                options.addArguments("--headless");
-            }
+        switch (browserName.toLowerCase()) {
+            case "firefox":
+                FirefoxOptions options = new FirefoxOptions();
+                // configuration to run headless mode
+                if (isHeadlessMode) {
+                    options.addArguments("--window-size=1920,1080");
+                    options.addArguments("--start-maximized");
+                    options.addArguments("--headless");
+                }
 
-            String downloadPath = "";
-            // Get download path
-            if(os.contains("Windows")) {
-                downloadPath = System.getProperty("windowsDownload");
-            }
-            else if(os.contains("Linux")){
-                downloadPath = System.getProperty("linuxDownload");
-            }
-            FirefoxProfile firefoxProfile = new FirefoxProfile();
-            firefoxProfile.setPreference("browser.download.folderList", 2);
-            firefoxProfile.setPreference("browser.download.manager.showWhenStarting", false);
-            firefoxProfile.setPreference("browser.download.dir", downloadPath);
-            firefoxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk", "text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            firefoxProfile.setPreference("browser.helperApps.neverAsk.openFile","text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            firefoxProfile.setPreference("browser.helperApps.alwaysAsk.force", false);
-            firefoxProfile.setPreference("browser.download.manager.alertOnEXEOpen", false);
-            firefoxProfile.setPreference("browser.download.manager.focusWhenStarting", false);
-            firefoxProfile.setPreference("browser.download.manager.useWindow", false);
-            firefoxProfile.setPreference("browser.download.manager.showAlertOnComplete", false);
-            firefoxProfile.setPreference("browser.download.manager.closeWhenDone", false);
+                WebDriverManager.firefoxdriver().setup();
+                capabilities.setBrowserName("Firefox");
+                webDriver.set(new FirefoxDriver(options));
+                break;
+            case "chrome":
+                ChromeOptions chromeOptions = new ChromeOptions();
+                // configuration to run headless mode
+                if (isHeadlessMode) {
+                    chromeOptions.addArguments("--window-size=1920,1080");
+                    chromeOptions.addArguments("--start-maximized");
+                    chromeOptions.addArguments("--headless");
+                }
 
+                WebDriverManager.chromedriver().setup();
+                capabilities.setBrowserName("Chrome");
 
-            options.setProfile(firefoxProfile);
-            WebDriverManager.firefoxdriver().setup();
-            capabilities.setBrowserName("Firefox");
-            webDriver.set(new FirefoxDriver(options));
-        } else if (browserName.equalsIgnoreCase("chrome")) {
-            //capabilities = DesiredCapabilities.chrome();
+                webDriver.set(new ChromeDriver(chromeOptions));
+                break;
 
-            ChromeOptions options = new ChromeOptions();
-            // configuration to run headless mode
-            if(headless != null && headless.equalsIgnoreCase("yes")) {
-                options.addArguments("--window-size=1920,1080");
-                options.addArguments("--start-maximized");
-                options.addArguments("--headless");
-            }
-
-            WebDriverManager.chromedriver().setup();
-            capabilities.setBrowserName("Chrome");
-
-            if (os.contains("Windows")) {
-                capabilities.setPlatform(Platform.WIN8_1);
-            } else if (os.contains("Linux")) {
-                capabilities.setPlatform(Platform.LINUX);
-            } else if (os.contains("Mac")) {
-                capabilities.setPlatform(Platform.MAC);
-            }
-
-            webDriver.set(new ChromeDriver(options));
+            case "edge":
+                EdgeOptions edgeOptions = new EdgeOptions();
+                if (isHeadlessMode) {
+                    edgeOptions.addArguments("--window-size=1920,1080");
+                    edgeOptions.addArguments("--start-maximized");
+                    edgeOptions.addArguments("--headless");
+                }
+                WebDriverManager.edgedriver().setup();
+                capabilities.setBrowserName("Edge");
+                webDriver.set(new EdgeDriver(edgeOptions));
+                break;
+            default:
+                break;
         }
 
         LoggingListener listener = new LoggingListener();
@@ -209,9 +194,9 @@ public class DriverManager {
      * Hook after each step
      * Take screenshot for Then steps
      */
-    int stepIndex = 0;
-    @AfterStep
-    public void afterStep(Scenario scenario){
+//    int stepIndex = 0;
+//    @AfterStep
+//    public void afterStep(Scenario scenario){
 //        try {
 //            Field f = scenario.getClass().getDeclaredField("delegate");
 //            f.setAccessible(true);
@@ -239,7 +224,7 @@ public class DriverManager {
 //        } catch (Exception ex) {
 //            ex.printStackTrace();
 //        }
-    }
+//    }
 
     /**
      *  Method to load system information (url, user, pass)
