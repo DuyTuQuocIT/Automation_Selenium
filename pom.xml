@@ -195,6 +195,7 @@
 					<suiteXmlFiles>
 						<suiteXmlFile>./testng.xml</suiteXmlFile>
 					</suiteXmlFiles>
+					<argLine>-Xmx1024m</argLine>
 				</configuration>
 			</plugin>
 

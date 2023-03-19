@@ -174,8 +174,6 @@ public class DriverManager {
                 // Attach screenshot on failed scenario
                 scenario.attach(ts.getScreenshotAs(OutputType.BYTES),"image/png", "Failed at: " + timestamp);
                 System.out.println("Scenario failed and screenshot saved in screenshot folder");
-                //Ping test on failed scenario
-                //pingTest(scenario,1);
             } catch (Exception e) {
                 System.out.println("Exception while taking screenshot " + e.getMessage());
             }
